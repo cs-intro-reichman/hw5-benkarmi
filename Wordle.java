@@ -86,18 +86,13 @@ public class Wordle {
 
         int WORD_LENGTH = 5;
         int MAX_ATTEMPTS = 6;
-        
-        // Read dictionary
+    
         String[] dict = readDictionary("dictionary.txt");
+        String secret = chooseSecretWord(dict).toUpperCase();
 
-        // Choose secret word
-        String secret = chooseSecretWord(dict);
-
-        // Prepare 2D arrays for guesses and results
         char[][] guesses = new char[MAX_ATTEMPTS][WORD_LENGTH];
         char[][] results = new char[MAX_ATTEMPTS][WORD_LENGTH];
 
-        // Prepare to read from the standart input 
         In inp = new In();
 
         int attempt = 0;
@@ -108,33 +103,23 @@ public class Wordle {
             String guess = "";
             boolean valid = false;
 
-            // Loop until you read a valid guess
             while (!valid) {
                 System.out.print("Enter your guess (5-letter word): ");
                 guess = inp.readString();
-                boolean indict = false;
-                for(int i = 0 ; 1 < dict.length ; i++){
-                   if (dict[i].equals(guess)){
-                    indict = true;
-                    break;
-                   }
-                }
+                guess = guess.trim().toUpperCase();
 
-                if(guess.length() != WORD_LENGTH || !indict){
-                    System.err.println("Invalid word. Please try again.");
+                if (guess.length() != WORD_LENGTH) {
+                    System.out.println("Invalid word. Please try again.");
                 } else {
                     valid = true;
-                }
-
+                } 
             }
 
-            // Store guess and compute feedback
-            // ... use storeGuess and computeFeedback
+            storeGuess(guess, guesses, attempt);
+            computeFeedback(secret, guess, results[attempt]);
 
-            // Print board
             printBoard(guesses, results, attempt);
 
-            // Check win
             if (isAllGreen(results[attempt])) {
                 System.out.println("Congratulations! You guessed the word in " + (attempt + 1) + " attempts.");
                 won = true;
@@ -144,10 +129,11 @@ public class Wordle {
         }
 
         if (!won) {
-            System.out.println("Sorry, you didn't guess the word.");
+            System.out.println("Sorry, you did not guess the word.");
             System.out.println("The secret word was: " + secret);
         }
 
         inp.close();
     }
+
 }
